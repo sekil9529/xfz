@@ -5,3 +5,8 @@ front/src
 whoosh_index/
 
 .env
+
+.idea/*
+
+__pypackages__/
+__pycache__/
