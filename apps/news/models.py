@@ -23,6 +23,7 @@ class Comment(models.Model):
     pub_time = models.DateTimeField(auto_now_add=True)
     news = models.ForeignKey("News", on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey("xfzauth.User", on_delete=models.CASCADE)
+    is_deleted = models.BooleanField("已删除", null=False, default=0)
 
     class Meta:
         ordering = ['-pub_time']
