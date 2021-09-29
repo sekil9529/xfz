@@ -6,6 +6,7 @@ from utils import restful
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import permission_required
 
+
 @method_decorator(permission_required(perm="course.change_course", login_url='/'), name='dispatch')
 class PubCourse(View):
     def get(self, request):
@@ -15,7 +16,7 @@ class PubCourse(View):
         }
         return render(request, 'cms/pub_course.html', context=context)
 
-    def post(self,request):
+    def post(self, request):
         form = PubCourseForm(request.POST)
         if form.is_valid():
             title = form.cleaned_data.get('title')

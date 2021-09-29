@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from functools import wraps
 from django.http import Http404
 
+
 def xfz_login_required(func):
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -15,6 +16,7 @@ def xfz_login_required(func):
 
     return wrapper
 
+
 def xfz_superuser_required(viewfunc):
     @wraps(viewfunc)
     def decorator(request, *args, **kwargs):
@@ -22,4 +24,5 @@ def xfz_superuser_required(viewfunc):
             return viewfunc(request, *args, **kwargs)
         else:
             raise Http404()
+
     return decorator

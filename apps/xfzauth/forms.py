@@ -5,6 +5,8 @@ from django.contrib.auth import get_user_model
 import django_redis
 
 User = get_user_model()
+
+
 # CACHE = django_redis.get_redis_connection()
 
 class LoginForm(forms.Form, FormMixin):
@@ -19,6 +21,7 @@ class LoginForm(forms.Form, FormMixin):
         'required': '密码不能为空！'
     })
     remember = forms.IntegerField(required=False)
+
 
 class RegisterFrom(forms.Form, FormMixin):
     telephone = forms.CharField(max_length=11, min_length=11, error_messages={

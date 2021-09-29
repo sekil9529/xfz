@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.contrib import messages
 from utils import restful
 
+
 @xfz_superuser_required
 def staffs_view(request):
     staffs = User.objects.filter(is_staff=True)
@@ -15,6 +16,7 @@ def staffs_view(request):
         'staffs': staffs
     }
     return render(request, 'cms/staffs.html', context=context)
+
 
 @method_decorator(xfz_superuser_required, name='dispatch')
 class AddStaffView(View):
@@ -41,6 +43,7 @@ class AddStaffView(View):
             messages.info(request, '该手机号码不存在！')
             return redirect(reverse('cms:add_staff'))
 
+
 @method_decorator(xfz_superuser_required, name='dispatch')
 class editStaffView(View):
     def get(self, request, staff_id):
@@ -55,7 +58,7 @@ class editStaffView(View):
             }
             return render(request, 'cms/edit_staff.html', context=context)
         else:
-            return restful.params_error(message= '员工{}不存在！'.format(staff_id))
+            return restful.params_error(message='员工{}不存在！'.format(staff_id))
 
     def post(self, request, staff_id):
         telephone = request.POST.get('telephone')
@@ -71,6 +74,7 @@ class editStaffView(View):
         else:
             messages.info(request, '该手机号码不存在！')
             return redirect(reverse('cms:edit_staff'))
+
 
 @require_GET
 @xfz_superuser_required

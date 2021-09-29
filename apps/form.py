@@ -1,5 +1,6 @@
 '''form表单的一些工具方法'''
 
+
 class FormMixin:
     def get_errors(self):
         errors = self.errors.get_json_data()

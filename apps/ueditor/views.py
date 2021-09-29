@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 import json
 import re
 import string
@@ -17,10 +17,11 @@ from django.http import FileResponse
 from django.views.generic import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_http_methods
+
 # 更改工作目录。这么做的目的是七牛qiniu的sdk
 # 在设置缓存路径的时候默认会设置到C:/Windows/System32下面
 # 会造成没有权限创建。
-#os.chdir(os.path.dirname(__file__))
+# os.chdir(os.path.dirname(__file__))
 try:
     import qiniu
 except:
@@ -70,7 +71,8 @@ if UEDITOR_UPLOAD_TO_QINIU:
         UEDITOR_QINIU_DOMAIN = settings.UEDITOR_QINIU_DOMAIN
     except Exception as e:
         option = e.args[0]
-        raise RuntimeError('请在app.config中配置%s！'%option)
+        raise RuntimeError('请在app.config中配置%s！' % option)
+
 
 @method_decorator([csrf_exempt, require_http_methods(['GET', 'POST'])], name='dispatch')
 class UploadView(View):
@@ -87,7 +89,7 @@ class UploadView(View):
         subffix = os.path.splitext(rawfilename)[-1]
         return filename + subffix
 
-    def _json_result(self,state='', url='', title='', original=''):
+    def _json_result(self, state='', url='', title='', original=''):
         """
         返回指定格式的json数据的
         """
@@ -137,7 +139,7 @@ class UploadView(View):
             result = json.loads(re.sub(r'\/\*.*\*\/', '', fp.read()))
             return JsonResponse(result)
 
-    def _action_upload(self,request):
+    def _action_upload(self, request):
         """
         处理文件（图片，视频，普通文件）上传
         """
@@ -160,7 +162,7 @@ class UploadView(View):
         else:
             return self._json_result()
 
-    def _action_scrawl(self,request):
+    def _action_scrawl(self, request):
         base64data = request.form.get("upfile")
         img = base64.b64decode(base64data)
         filename = self._random_filename('xx.png')
@@ -180,6 +182,7 @@ class UploadView(View):
             return self._action_scrawl(request)
         else:
             return self._json_result()
+
 
 def send_file(request, filename):
     fp = open(os.path.join(UEDITOR_UPLOAD_PATH, filename), 'rb')

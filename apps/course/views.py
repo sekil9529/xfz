@@ -7,11 +7,13 @@ from hashlib import md5
 from apps.xfzauth.decorators import xfz_login_required
 from django.views.decorators.csrf import csrf_exempt
 
+
 def index(request):
     context = {
         'courses': Course.objects.all()
     }
     return render(request, 'course/course_index.html', context=context)
+
 
 @xfz_login_required
 def course_detail(request, course_id):
@@ -25,6 +27,7 @@ def course_detail(request, course_id):
         'courses': courses
     }
     return render(request, 'course/course_detail.html', context=context)
+
 
 def course_token(request):
     # video：是视频文件的完整链接
@@ -51,6 +54,7 @@ def course_token(request):
     token = '{0}_{1}_{2}'.format(signature, USER_ID, expiration_time)
     return restful.result(data={'token': token})
 
+
 @xfz_login_required
 def course_order(request, course_id):
     course = Course.objects.get(pk=course_id)
@@ -69,6 +73,7 @@ def course_order(request, course_id):
     return render(request, 'course/course_order.html', context=context)
     # return render(request, 'course/course_order.html', context={'course': course})
 
+
 @xfz_login_required
 def course_order_key(request):
     goodsname = request.POST.get("goodsname")
@@ -83,23 +88,24 @@ def course_order_key(request):
     uid = ''
     orderuid = str(request.user.pk)
 
-    print('goodsname:',goodsname)
-    print('istype:',istype)
-    print('notify_url:',notify_url)
-    print('orderid:',orderid)
-    print('price:',price)
-    print('return_url:',return_url)
+    print('goodsname:', goodsname)
+    print('istype:', istype)
+    print('notify_url:', notify_url)
+    print('orderid:', orderid)
+    print('price:', price)
+    print('return_url:', return_url)
 
     key = md5((goodsname + istype + notify_url + orderid + orderuid + price + return_url + token + uid).encode(
         "utf-8")).hexdigest()
     return restful.result(data={"key": key})
 
+
 # 这个装饰器用于赦免视图绕过django的csrf验证
 @csrf_exempt
 def notify_view(request):
     orderid = request.POST.get('orderid')
-    print('='*10)
+    print('=' * 10)
     print(orderid)
-    print('='*10)
+    print('=' * 10)
     CourseOrder.objects.filter(pk=orderid).update(status=2)
     return restful.ok()

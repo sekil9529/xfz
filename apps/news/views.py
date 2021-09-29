@@ -8,6 +8,7 @@ from .serializers import NewsSerializer, CommentSerizlizer
 from utils import restful
 from apps.xfzauth.decorators import xfz_login_required
 
+
 def index(request):
     # newses = News.objects.all()[0:2]
     # 当一个模型中有外键引用，可以使用select_related进行优化
@@ -21,6 +22,7 @@ def index(request):
     }
 
     return render(request, 'news/index.html', context=context)
+
 
 def news_list(request):
     # 通过p参数，来指定要获取第几页的数据
@@ -48,6 +50,7 @@ def news_list(request):
     # 使用json进行传输
     return restful.result(data=data)
 
+
 def news_detail(request, news_id):
     try:
         # news = News.objects.select_related('category', 'author').get(pk=news_id)
@@ -62,6 +65,7 @@ def news_detail(request, news_id):
     except News.DoesNotExist:
         # Http404会返回templates中的404.html页面
         raise Http404
+
 
 # 这里为什么不直接用django提供的login_required原因是：立即评论走的是ajax，所以login_required中的重定向功能用不了
 # 所以我们自定义一个装饰器，比内置的login_required多处理ajax类型的请求！
@@ -79,12 +83,14 @@ def public_comment(request):
     else:
         return restful.params_error(message=form.get_errors())
 
+
 def search(request):
     q = request.GET.get('q')
     # 判断是否有(字符串空或None)查询字符串q，有就是点击了查询，没有就是第一次进入搜索界面，展示热点新闻
     is_show_hot = True
     if q:
-        newses = News.objects.select_related('category', 'author').filter(Q(title__icontains=q) | Q(content__icontains=q))
+        newses = News.objects.select_related('category', 'author').filter(
+            Q(title__icontains=q) | Q(content__icontains=q))
         is_show_hot = False
     else:
         newses = News.objects.select_related('category', 'author').filter(category=3)

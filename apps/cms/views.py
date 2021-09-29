@@ -21,10 +21,12 @@ import os
 User = get_user_model()
 LOGIN_URL = '/'
 
+
 # 员工限制装饰器,必须is_staff=1,否则跳转至name=index的url视图上
 @staff_member_required(login_url='index')
 def index(request):
     return render(request, 'cms/index.html')
+
 
 @method_decorator(permission_required(perm='news.change_news', login_url=LOGIN_URL), name='dispatch')
 class NewsListView(View):
@@ -124,6 +126,7 @@ class NewsListView(View):
             'right_has_more': right_has_more
         }
 
+
 @method_decorator(permission_required(perm="news.add_news", login_url=LOGIN_URL), name='dispatch')
 class WriteNewsView(View):
     def get(self, request):
@@ -147,6 +150,7 @@ class WriteNewsView(View):
             return restful.ok()
         else:
             return restful.params_error(message=form.get_errors())
+
 
 @method_decorator(permission_required(perm='news.change_news', login_url=LOGIN_URL), name='dispatch')
 class EditNewsView(View):
@@ -175,6 +179,7 @@ class EditNewsView(View):
         else:
             return restful.params_error(message=form.get_errors())
 
+
 @method_decorator(xfz_login_required, name='dispatch')
 class EditUserInfo(View):
     def get(self, request):
@@ -188,12 +193,14 @@ class EditUserInfo(View):
         User.objects.filter(pk=user.pk).update(user_avater=image_url, user_desc=desc)
         return restful.ok()
 
+
 @require_POST
 @permission_required(perm="news.delete_news", login_url=LOGIN_URL)
 def delete_news(request):
     news_id = request.POST.get('news_id')
     News.objects.filter(pk=news_id).delete()
     return restful.ok()
+
 
 @require_GET
 @permission_required(perm="news.change_newscategory", login_url=LOGIN_URL)
@@ -203,6 +210,7 @@ def news_category(request):
         'categories': categories,
     }
     return render(request, 'cms/news_category.html', context=context)
+
 
 @require_POST
 @permission_required(perm="news.add_newscategory", login_url=LOGIN_URL)
@@ -215,6 +223,7 @@ def add_news_category(request):
         return restful.ok()
     else:
         return restful.params_error(message='该分类已经存在!')
+
 
 @require_POST
 @permission_required(perm="news.change_newscategory", login_url=LOGIN_URL)
@@ -239,6 +248,7 @@ def edit_news_category(request):
     else:
         return restful.params_error(message=form.get_errors())
 
+
 @require_POST
 @permission_required(perm="news.delete_newscategory", login_url=LOGIN_URL)
 def delete_news_category(request):
@@ -254,10 +264,12 @@ def delete_news_category(request):
     except:
         return restful.params_error(message='该分类不存在！')
 
+
 @require_GET
 @permission_required(perm="news.change_banner", login_url=LOGIN_URL)
 def banners(request):
-    return render(request,'cms/banners.html')
+    return render(request, 'cms/banners.html')
+
 
 @require_GET
 @permission_required(perm="news.view_banner", login_url=LOGIN_URL)
@@ -265,6 +277,7 @@ def banner_list(request):
     banners_ = Banner.objects.all()
     serialize = BannerSerializer(banners_, many=True)
     return restful.result(data=serialize.data)
+
 
 @require_POST
 @permission_required(perm="news.add_banner", login_url=LOGIN_URL)
@@ -278,6 +291,7 @@ def add_banner(request):
         return restful.result(data={"banner_id": banner.pk})
     else:
         return restful.params_error(message=form.get_errors())
+
 
 @require_POST
 @permission_required(perm="news.change_banner", login_url=LOGIN_URL)
@@ -293,12 +307,14 @@ def edit_banner(request):
     else:
         return restful.params_error(message=form.get_errors())
 
+
 @require_POST
 @permission_required(perm="news.delete_banner", login_url=LOGIN_URL)
 def delete_banner(request):
     banner_id = request.POST.get('banner_id')
     Banner.objects.filter(pk=banner_id).delete()
     return restful.ok()
+
 
 @require_POST
 @staff_member_required(login_url='index')
@@ -311,6 +327,7 @@ def upload_file(request):
     # 拥有域名+端口号，只需要传查询路径(路由)
     url = request.build_absolute_uri(settings.MEDIA_URL + name)
     return restful.result(data={'url': url})
+
 
 @require_GET
 @staff_member_required(login_url='index')

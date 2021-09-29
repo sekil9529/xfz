@@ -13,6 +13,8 @@ import django_redis
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+
 # CACHE = django_redis.get_redis_connection()
 
 
@@ -81,7 +83,7 @@ def img_chptcha(request):
     response['Content-length'] = out.tell()
 
     # 12Df：12Df.lower()
-    cache.set(text.lower(), text.lower(), 5*60)
+    cache.set(text.lower(), text.lower(), 5 * 60)
     # CACHE.set(text.lower(), text.lower(), ex=5*60)
     return response
 
@@ -90,7 +92,7 @@ def sms_captcha(request):
     # /sms_captcha/?telephone=xxx
     telephone = request.GET.get('telephone')
     code = Captcha.gene_text()
-    cache.set(telephone, code, 5*60)
+    cache.set(telephone, code, 5 * 60)
     # CACHE.set(telephone, code, ex=5*60)
     print('短信验证码：', code)
     # result = smssender.send(telephone, code)

@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from shortuuidfield import ShortUUIDField
 from django.db.utils import IntegrityError
 
+
 class UserManager(BaseUserManager):
     def _create_user(self, telephone, username, password, **kwargs):
         if not telephone:
