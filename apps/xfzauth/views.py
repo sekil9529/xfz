@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.contrib.auth import login, logout, authenticate
 from django.views.decorators.http import require_POST
 from django.shortcuts import render, redirect, reverse
@@ -52,7 +54,10 @@ def logout_view(request):
 
 @require_POST
 def register(request):
-    form = RegisterFrom(request.POST)
+    data = deepcopy(request.POST)
+    remote_addr: str = request.META["REMOTE_ADDR"]
+    data.setlist("remote_addr", [remote_addr])
+    form = RegisterFrom(data)
     if form.is_valid():
         telephone = form.cleaned_data.get('telephone')
         username = form.cleaned_data.get('username')
@@ -61,6 +66,9 @@ def register(request):
         user = User.objects.create_user(telephone=telephone, username=username, password=password)
 
         login(request, user)
+        # 删除缓存
+        cache_key: str = f"captcha:{remote_addr}"
+        cache.delete(cache_key)
         return restful.ok()
     else:
         print(form.get_errors())
@@ -81,9 +89,9 @@ def img_chptcha(request):
     response.write(out.read())
     # 上一句out.read()执行完之后，指针走到文件最后的位置，那么out.tell()是获取当前位置，自然就是文件的大小（字节数）
     response['Content-length'] = out.tell()
-
     # 12Df：12Df.lower()
-    cache.set(text.lower(), text.lower(), 5 * 60)
+    remote_addr: str = request.META["REMOTE_ADDR"]
+    cache.set(f"captcha:{remote_addr}", text.lower(), 5 * 60)
     # CACHE.set(text.lower(), text.lower(), ex=5*60)
     return response
 
@@ -94,7 +102,6 @@ def sms_captcha(request):
     code = Captcha.gene_text()
     cache.set(telephone, code, 5 * 60)
     # CACHE.set(telephone, code, ex=5*60)
-    print('短信验证码：', code)
     # result = smssender.send(telephone, code)
     result = aliyunsms.send_sms(telephone, code)
     # result = True

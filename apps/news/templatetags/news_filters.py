@@ -1,9 +1,10 @@
-#encoding: utf-8
+# encoding: utf-8
 from django import template
 from datetime import datetime
 from django.utils.timezone import now as now_func, localtime
 
 register = template.Library()
+
 
 @register.filter
 def time_since(value):
@@ -25,17 +26,18 @@ def time_since(value):
     timestamp = (now - value).total_seconds()
     if timestamp < 60:
         return '刚刚'
-    elif timestamp >= 60 and timestamp < 60*60:
-        minutes = int(timestamp/60)
+    elif 60 <= timestamp < 60 * 60:
+        minutes = int(timestamp / 60)
         return '%s分钟前' % minutes
-    elif timestamp >= 60*60 and timestamp < 60*60*24:
-        hours = int(timestamp/60/60)
+    elif 60 * 60 <= timestamp < 60 * 60 * 24:
+        hours = int(timestamp / 60 / 60)
         return '%s小时前' % hours
-    elif timestamp >= 60*60*24 and timestamp < 60*60*24*30:
-        days = int(timestamp/60/60/24)
+    elif 60 * 60 * 24 <= timestamp < 60 * 60 * 24 * 30:
+        days = int(timestamp / 60 / 60 / 24)
         return '%s天前' % days
     else:
         return value.strftime("%Y/%m/%d %H:%M")
+
 
 @register.filter
 def time_format(value):
@@ -43,6 +45,7 @@ def time_format(value):
         return value
     # 数据库拿出来的时间是UTC的，可以使用django.utils.timezone.localtime将其转换成setting.py设置的时区时间
     return localtime(value).strftime("%Y/%m/%d %H:%M:%S")
+
 
 @register.filter
 def author_other_newses(news):

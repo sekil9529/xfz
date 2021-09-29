@@ -63,12 +63,13 @@ class RegisterFrom(forms.Form, FormMixin):
             raise forms.ValidationError('两次密码输入不一致！')
 
         img_captcha = cleaned_data.get('img_captcha')
+        remote_addr: str = self.data.get("remote_addr")
         if img_captcha:
             img_captcha_lower = img_captcha.lower()
-            cached_img_captcha = cache.get(img_captcha_lower)
+            cache_key: str = f"captcha:{remote_addr}"
+            cached_img_captcha = cache.get(cache_key)
             # redis取出来的是bytes,要转成str
             # cached_img_captcha = str(CACHE.get(img_captcha_lower), encoding='utf-8')
-            print(cached_img_captcha)
             if cached_img_captcha and cached_img_captcha.lower() != img_captcha_lower:
                 raise forms.ValidationError("图形验证码错误！")
 
@@ -76,7 +77,6 @@ class RegisterFrom(forms.Form, FormMixin):
         if sms_captcha and telephone:
             cached_sms_captcha = cache.get(telephone)
             # cached_sms_captcha = str(CACHE.get(telephone), encoding='utf-8')
-            print(cached_sms_captcha)
             if cached_sms_captcha and cached_sms_captcha.lower() != sms_captcha.lower():
                 raise forms.ValidationError('短信验证码错误！')
 
