@@ -1,7 +1,9 @@
 from django.db import models
 
+
 class NewsCategory(models.Model):
     name = models.CharField(max_length=32)
+
 
 class News(models.Model):
     title = models.CharField(max_length=200)
@@ -15,6 +17,7 @@ class News(models.Model):
     class Meta:
         ordering = ['-pub_time']
 
+
 class Comment(models.Model):
     content = models.TextField()
     pub_time = models.DateTimeField(auto_now_add=True)
@@ -23,6 +26,7 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['-pub_time']
+
 
 class Banner(models.Model):
     priority = models.IntegerField(default=0)

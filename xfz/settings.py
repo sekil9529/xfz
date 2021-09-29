@@ -12,9 +12,13 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
+from utils.config import Config
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# 配置文件
+CONFIG = Config(os.path.join(BASE_DIR, ".env")).format()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -91,14 +95,17 @@ WSGI_APPLICATION = 'xfz.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+DB_CONFIG = CONFIG["database"]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'xfz',
-        'HOST': '127.0.0.1',
-        'PORT': 3306,
-        'USER': 'root',
-        'PASSWORD': 'wang2819966'
+        'HOST': DB_CONFIG["host"],  # 主机
+        'PORT': DB_CONFIG["port"],  # 端口
+        'NAME': DB_CONFIG["db"],  # 数据库名
+        'USER': DB_CONFIG["user"],  # 用户名
+        'PASSWORD': DB_CONFIG["password"],  # 密码
+        'CONN_MAX_AGE': 60 * 60 * 2,
     }
 }
 
@@ -121,23 +128,20 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REDIS_CONFIG = CONFIG["redis"]
+
 # 缓存配置
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        # 'LOCATION': '192.168.232.128:11211'
-        'LOCATION': '127.0.0.1:11211'
-    },
-    # 'default': {
-    #     'BACKEND': 'django_redis.cache.RedisCache',
-    #     'LOCATION': 'redis://192.168.232.130:6379',
-    #     'OPTIONS': {
-    #         'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-    #         'CONNECTION_POOL_KWARGS': {'max_connections': 100},
-    #         'PASSWORD': 'wang2819966',
-    #         'decode_responses': True
-    #     }
-    # }
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f'redis://{REDIS_CONFIG["host"]}:{REDIS_CONFIG["port"]}/{REDIS_CONFIG["db"]}',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'CONNECTION_POOL_KWARGS': {'max_connections': 100},
+            'PASSWORD': REDIS_CONFIG["password"],
+            'decode_responses': True
+        }
+    }
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'

@@ -14,6 +14,7 @@ request.set_protocol_type('https') # https | http
 request.set_version('2017-05-25')
 request.set_action_name('SendSms')
 
+
 def send_sms(phone_numbers, code):
     request.add_query_param('RegionId', "cn-hangzhou")
     request.add_query_param('PhoneNumbers', phone_numbers)

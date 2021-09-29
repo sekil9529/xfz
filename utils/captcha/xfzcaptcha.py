@@ -60,23 +60,23 @@ class Captcha(object):
                 if tmp > 100 - chance:
                     draw.point((w, h), fill=(0, 0, 0))
 
-    #生成验证码
     @classmethod
     def gene_code(cls):
-        width,height = cls.size #宽和高
-        image = Image.new('RGBA',(width,height),cls.bgcolor) #创建画板
-        font = ImageFont.truetype(cls.font_path,cls.fontsize) #验证码的字体
-        draw = ImageDraw.Draw(image)  #创建画笔
-        text = cls.gene_text() #生成字符串
+        """生成验证码"""
+        width, height = cls.size  # 宽和高
+        image = Image.new('RGBA', (width, height), cls.bgcolor)  # 创建画板
+        font = ImageFont.truetype(cls.font_path, cls.fontsize)  # 验证码的字体
+        draw = ImageDraw.Draw(image)  # 创建画笔
+        text = cls.gene_text()  # 生成字符串
         font_width, font_height = font.getsize(text)
-        draw.text(((width - font_width) / 2, (height - font_height) / 2),text,font= font,fill=cls.fontcolor) #填充字符串
+        draw.text(((width - font_width) / 2, (height - font_height) / 2), text, font=font, fill=cls.fontcolor)  # 填充字符串
         # 如果需要绘制干扰线
         if cls.draw_line:
             # 遍历line_number次,就是画line_number根线条
-            for x in range(0,cls.line_number):
-                cls.__gene_line(draw,width,height)
+            for x in range(0, cls.line_number):
+                cls.__gene_line(draw, width, height)
         # 如果需要绘制噪点
         if cls.draw_point:
-            cls.__gene_points(draw,10,width,height)
+            cls.__gene_points(draw, 10, width, height)
 
         return text, image

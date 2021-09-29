@@ -15,6 +15,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 # CACHE = django_redis.get_redis_connection()
 
+
 @require_POST
 def login_view(request):
     form = LoginForm(request.POST)
@@ -41,9 +42,11 @@ def login_view(request):
     else:
         return restful.params_error(message=form.get_errors())
 
+
 def logout_view(request):
     logout(request)
     return redirect(reverse('index'))
+
 
 @require_POST
 def register(request):
@@ -60,6 +63,7 @@ def register(request):
     else:
         print(form.get_errors())
         return restful.params_error(form.get_errors())
+
 
 def img_chptcha(request):
     text, image = Captcha.gene_code()
@@ -79,8 +83,8 @@ def img_chptcha(request):
     # 12Df：12Df.lower()
     cache.set(text.lower(), text.lower(), 5*60)
     # CACHE.set(text.lower(), text.lower(), ex=5*60)
-
     return response
+
 
 def sms_captcha(request):
     # /sms_captcha/?telephone=xxx
